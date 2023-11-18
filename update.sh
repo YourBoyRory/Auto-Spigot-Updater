@@ -17,7 +17,7 @@ rev="latest" # latest
 delbackups=1
 
 # Java
-javaVer="8" # 8
+javaVer="17" # normally use '8' or for minecraft 1.18+ use '17' 
 updatejava=1
 
 
@@ -26,7 +26,7 @@ updatejava=1
 # Update Java Version
 if [ $updatejava -eq 1 ] ; then
 	sudo yum update
-	sudo yum install openjdk-$javaVer-jre-headless
+	sudo yum install java-$javaVer-openjdk
 fi
 
 # Updates BuildTools
