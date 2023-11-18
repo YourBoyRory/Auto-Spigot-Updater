@@ -25,8 +25,8 @@ updatejava=1
 
 # Update Java Version
 if [ $updatejava -eq 1 ] ; then
-	sudo apt-get update
-	sudo apt-get install openjdk-$javaVer-jre-headless
+	sudo yum update
+	sudo yum install openjdk-$javaVer-jre-headless
 fi
 
 # Updates BuildTools
