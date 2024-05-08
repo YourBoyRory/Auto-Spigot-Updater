@@ -6,18 +6,18 @@
 #  | |_| |\ V  V /| |_| |
 #   \___/  \_/\_/  \___/
 # Organized Web Operations
-# YourBoyRory
+# Zayne Byard
 
 ## CONFIG ##
 
 # BuildTools
-buildtools_DIR="/servers/minecraftserver/"
-install_DIR="/servers/minecraftserver/"
-rev="latest" # latest
+buildtools_DIR="./"
+install_DIR="./"
+rev="1.20.6" # latest
 delbackups=1
 
 # Java
-javaVer="17" # normally use '8' or for minecraft 1.18+ use '17' 
+javaVer="21" # 8
 updatejava=1
 
 
@@ -25,9 +25,9 @@ updatejava=1
 
 # Update Java Version
 if [ $updatejava -eq 1 ] ; then
-	sudo yum update
-	sudo yum install java-$javaVer-openjdk
+    sudo dnf install java-$javaVer-openjdk java-$javaVer-openjdk-devel
 fi
+
 
 # Updates BuildTools
 wget -O $buildtools_DIR/BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar
@@ -45,10 +45,11 @@ mv $install_DIR/spigot-*.jar $install_DIR/spigot-old.jar.bak
 
 # Fresh Installs Spigot
 cd $install_DIR
-java -jar $buildtools_DIR/BuildTools.jar --rev $rev
+
+/usr/lib/jvm/jre-$javaVer/bin/java -jar $buildtools_DIR/BuildTools.jar --rev $rev
 if [ $? -eq 0 ] ; then
-    echo -e "\e[93mSuccess!\e[0m"
-	# Dels Backups if set to
+    echo -e "\e[93mServer Update Successful!\e[0m"
+    # Dels Backups if set to
     if [ $delbackups -eq 1 ] ; then
         echo -e "\e[93mRemoving Backups\e[0m"
         rm -rf $install_DIR/Bukkit.bak
@@ -58,9 +59,22 @@ if [ $? -eq 0 ] ; then
         rm -rf $install_DIR/work.bak
         rm -rf $install_DIR/apache-old.bak
         rm -rf $install_DIR/spigot-old.jar.bak
+        rm $install_DIR/backups/restorepoint/before_*.zip
     fi
+
+    # Create Restore Point
+    echo -e "\e[93mCreating Restore Point\e[0m"
+    mkdir $install_DIR/backups
+    mkdir $install_DIR/backups/restorepoint/
+    zip -r "./backups/restorepoint/before_$rev.zip" ./plugins ./world ./world*
+    if [ $? -ne 0 ] ; then
+        echo -e "[\e[31mERROR\e[0m] \e[31m\e[1mFAILED\e[0m to updating restore point!"
+        exit
+    fi
+    echo -e "\e[93mCreated Restore Point!\e[0m"
+
 else
-	# If update fails it attepts to restore
+    # If update fails it attepts to restore
     echo -e "[\e[31mERROR\e[0m] Server Update \e[31m\e[1mFAILED!\e[0m I have no fucking clue why..."
     echo -e "\e[93mRestoing Backups\e[0m"
     rm -rf $install_DIR/Bukkit
@@ -78,3 +92,5 @@ else
     mv $install_DIR/apache-maven.bak $install_DIR/$apacheVersion
     mv $install_DIR/spigot.jar.bak $install_DIR/$spigotVersion
 fi
+
+echo -e "\e[93mDone!\e[0m"
