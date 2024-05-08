@@ -6,7 +6,7 @@
 #  | |_| |\ V  V /| |_| |
 #   \___/  \_/\_/  \___/
 # Organized Web Operations
-# Zayne Byard
+# YourBoyRory
 
 ## CONFIG ##
 
